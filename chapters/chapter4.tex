@@ -1,0 +1,81 @@
+\chapter{基于深度强化学习的模式与出发时间选择方法}
+\label{chp:float}
+
+\section{马尔可夫决策过程框架}
+\subsection{状态表示}
+\subsection{动作空间}
+\subsection{奖励函数}
+
+\section{基于深度Q网络算法的模式与出发时间选择算法}
+
+\subsection{神经网络结构设计}
+
+The first step in designing a DQN model is to choose an appropriate neural network architecture.
+
+The architecture should be capable of taking the state as input and producing Q-values for each action in the action space as output.
+
+Convolutional neural networks (CNNs) are commonly used for problems with image-based inputs, while fully connected neural networks can be used for problems with vector-based inputs.
+
+The number and size of layers in the network can also vary depending on the complexity of the problem.
+
+\subsection{超参数的选择与标定}
+
+Hyperparameters play a crucial role in the performance of a DQN model.
+
+The learning rate, batch size, discount factor, and other hyperparameters should be carefully selected to optimize the performance of the model.
+
+The learning rate controls the rate at which the model updates its weights during training.
+
+The batch size determines how many state-action pairs are processed in each training iteration.
+
+The discount factor determines the balance between immediate and future rewards in the Q-value calculation.
+
+Other hyperparameters, such as the size of the replay buffer or the frequency of target network updates, can also have a significant impact on model performance.
+
+\subsection{模型的优化}
+
+Various optimization techniques can be used to improve the stability and convergence of a DQN model.
+
+Experience replay is a technique where past experiences are stored in a buffer and sampled randomly during training.
+
+Target networks can be used to estimate the Q-values of the next state to improve stability during training.
+
+Prioritized experience replay can be used to sample more important experiences more frequently.
+
+Reward shaping can be used to modify the reward function to incentivize certain behaviors.
+
+The selection and use of these optimization techniques can depend on the specific problem and the network architecture used.
+
+\section{模型的训练与评估}
+
+\subsection{数据收集与预处理}
+
+Before training a DQN model, it is important to preprocess the input data to make it suitable for the neural network.
+
+This can include steps such as normalization, scaling, and cropping of images.
+
+The RL agent also needs to collect data by interacting with the environment.
+
+During this process, the agent chooses actions based on the current state, receives a reward, and transitions to the next state.
+
+The state, action, reward, and next state are stored in a replay buffer, which is then used for training.
+
+\subsection{模型训练}
+
+To train a DQN model, the neural network is updated using stochastic gradient descent with mini-batches of state-action pairs from the replay buffer.
+
+During each training iteration, the model predicts Q-values for the current state, and the Q-value for the chosen action is compared to the target Q-value, which is calculated using the Bellman equation.
+
+The difference between the predicted and target Q-values is used to calculate the loss, which is then backpropagated through the network to update the weights.
+
+To improve stability and convergence, various techniques such as experience replay, target networks, and prioritized experience replay can be used.
+
+\subsection{模型的评估}
+
+Once the DQN model is trained, it is evaluated to assess its performance.
+
+The agent interacts with the environment using the trained model, and the cumulative reward obtained over a fixed number of episodes is used as a metric of performance.
+
+The agent may also be tested on a holdout set of data to assess its generalization capabilities.
+
+If the performance of the model is not satisfactory, the hyperparameters or model architecture can be adjusted, and the training and evaluation process can be repeated.
