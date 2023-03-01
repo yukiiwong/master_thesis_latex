@@ -23,8 +23,8 @@
 \tilde{m} \\
 \tilde{t}
 \end{array}\right]=\left[\begin{array}{c}
-\text { mode of transportation } \\
-\text { departure time }
+\text { 出行模式 } \\
+\text { 出发时间 }
 \end{array}\right]
 \in\left[\begin{array}{c}
 \left\{m_{1},m_{2}, \ldots, m_{N}\right\} \\
@@ -35,6 +35,53 @@
 
 动作空间是模型中重要的一部分，它定义了代理能够采取的所有行动，直接影响着模型的效果和性能。在建模时，需要综合考虑多种因素，将交通方式和出发时间等重要信息进行适当的编码，以便于代理进行决策。
 \subsection{状态空间}
+
+状态空间定义了智能体选择行动的上下文环境。对于JTMDTC，状态空间被设计为不仅包含有关行程的最新知识，还包括智能体早期经验。这种状态空间设计在很大程度上类似于理性人类的决策机制，即从经验中学习。由于重点不在于经验选择建模而在于选择指导或推荐，因此我们假设智能体能够充分感知环境，因此对行程具有完全信息。然而，我们稍后将讨论这种假设可能会有所放松。
+
+行程信息首先包括每种交通方式的旅行距离$L$和记忆旅行时间$\bar{T}$。前者是模式$m$的旅行距离，而后者是模式$m$的平均经验旅行时间。其原因有两个——利用经验和在交通随机性存在的情况下保持稳健性。作为行程信息的另外两个变量是初始出发时间$t_0$和出发时间差或偏移量$\Delta t$相对于$t_0$。将所有内容组合起来，得到以下特定于行程信息的状态向量：
+
+
+\begin{equation}
+\begin{aligned}
+{\bm{s}_\text{trip}^m}=\left[\begin{array}{c}
+L_m \
+{\bar{T}}m \
+t{0} \
+\Delta t
+\end{array}\right]=&\left[\begin{array}{c}
+\text{旅行距离}\
+\text{经验旅行时间}\
+\text{初始出发时间}\
+\text{出发时间差}
+\end{array}\right].
+\end{aligned}\label{equation:trip}
+\end{equation}
+
+环境信息基本上包括有助于不同交通方式旅行成本的因素。对于公共交通，考虑到两个因素，即可达性和票价。在这里，我们将可达性$p$定义为完成行程的第一和最后一段所需的总步行距离：
+
+\begin{equation}
+p=d_{\text{origin}}+d_{\text{destination}},
+\end{equation}
+
+其中$d_{\text{origin}}$和$d_{\text{destination}}$分别是从最近的公交车站或地铁站到起点和终点的步行距离。公共交通票价是必须支付的使用该服务的货币成本。对于私家车，我们考虑燃油价格作为影响因素，并将其放在状态中。因此，特定于环境信息的状态向量如下所示：
+
+\begin{equation}
+\begin{aligned}
+\bm{s}_\text{reduced}=\left[\begin{array}{c}
+\bar{T} \\
+t_{0} \\
+\Delta t
+\end{array}\right]=&\left[\begin{array}{c}
+\text { memory travel time } \\
+\text { initial departure time } \\
+\text { departure time difference }
+\end{array}\right].
+\end{aligned}\label{equation:obs}
+\end{equation}
+
+最后，我们要注意到，上述状态向量（或状态空间）中包含的变量可能因特定问题或应用而异。状态空间设计的目标是确保代理可以获得对其行动选择有意义的环境信息。对于某些应用程序，可能需要包括更多的环境因素，例如天气和道路条件。而对于其他应用程序，可能只需要少数几个变量即可获得有效的行动建议。因此，状态空间设计取决于特定的问题和应用场景。
+
+总之，状态空间是强化学习中非常重要的一个概念，它定义了代理在决策时需要考虑的上下文环境。在设计状态空间时，我们需要仔细考虑应用场景和问题的特征，以确保状态空间中包含的信息能够有效地指导代理的决策。同时，我们也需要注意状态空间的维度和大小，以便使代理能够有效地处理状态，并且可以在有限的时间内完成状态的学习和更新。
 \subsection{奖励函数}
 
 \section{基于深度Q网络算法的模式与出发时间选择算法}
