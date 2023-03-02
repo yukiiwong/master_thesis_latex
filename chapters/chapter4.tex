@@ -130,6 +130,23 @@ f=\mathbb{I}(\text { bus }) \cdot f_{\text {bus }}+\mathbb{I}(\text { subway }) 
 
 \section{基于深度Q网络算法的模式与出发时间选择算法}
 
+为了解决JTMDTC问题，我们采用无模型基于值的强化学习作为解决算法。它学习与MDP相关的状态动作值，基于此隐含地推导出最优策略，即始终选择导致最大状态动作值的动作。按照定义，由策略$\pi$产生的状态动作值是在状态动作对$(s_t,a_t)$上条件折扣回报的期望：
+\begin{equation}
+Q_{\pi}\left(\bm{s}_{t}, \bm{a}_{t}\right)=E\left[U_{t} \mid S_{t}=\bm{s}_{t}, A_{t}=\bm{a}_{t}\right].
+\end{equation}
+
+它表征了在遵循策略$\pi$之后，动作$a_t$在状态$s_t$上的优势。通过最大化上述状态动作值函数来确定最优策略，从而得到最优Q值$Q^* (s_t,a_t)$。最优动作$a_t^*$是导致最大Q值的动作：
+\begin{equation}
+\bm{a}_{t}^{*}=\underset{\bm{a} \in A}{\operatorname{argmax}} Q^{*}\left(\bm{s}_{t}, \bm{a}\right).
+\end{equation}
+
+DQN算法是无模型基于值的强化学习的前沿算法，它使用神经网络来近似最优状态动作值函数，从而将传统的Q-learning应用于高维和/或连续空间问题：
+\begin{equation}
+Q\left(\bm{s}_{t}, \bm{a}_{t} ; \mathbf{w}\right) \approx Q^{*}\left(\bm{s}_{t}, \bm{a}_{t}\right),
+\end{equation}
+
+其中$\mathbf{w}$是神经网络的权重向量。为了设计一个优秀的DQN算法，我们需要对神经网络结构进行设计，并对超参数进行选择和标定，然后对模型进行优化。神经网络结构设计应考虑输入和输出的特征，并充分考虑网络的深度和宽度。超参数包括学习率、批量大小、折扣因子和经验回放的容量。优化算法包括随机梯度下降、Adam和RMSProp等。通过选择适当的超参数和优化算法，可以提高DQN算法的收敛速度和性能。
+
 \subsection{神经网络结构设计}
 
 The first step in designing a DQN model is to choose an appropriate neural network architecture.
