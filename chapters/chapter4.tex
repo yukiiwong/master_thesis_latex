@@ -149,41 +149,98 @@ Q\left(\bm{s}_{t}, \bm{a}_{t} ; \mathbf{w}\right) \approx Q^{*}\left(\bm{s}_{t},
 
 \subsection{神经网络结构设计}
 
-The first step in designing a DQN model is to choose an appropriate neural network architecture.
 
-The architecture should be capable of taking the state as input and producing Q-values for each action in the action space as output.
+神经网络在强化学习中扮演着重要的角色，它可以作为函数逼近器来估计Q值函数，从而得到最优的策略。在DQN算法中，神经网络被用来近似状态-动作值函数，因此它的结构对算法的性能有着很大的影响。本节将对DQN算法中神经网络的结构进行详细的介绍。
 
-Convolutional neural networks (CNNs) are commonly used for problems with image-based inputs, while fully connected neural networks can be used for problems with vector-based inputs.
+DQN算法中的神经网络结构设计可以通过以下步骤进行：
 
-The number and size of layers in the network can also vary depending on the complexity of the problem.
+1.确定输入和输出层的维度：输入层的维度应该与状态向量的维度相同，而输出层的维度应该等于动作的数量。
+
+2.选择合适的隐藏层数和节点数：通常情况下，隐藏层数和节点数越多，神经网络的表示能力越强，但训练时间也会变得更长。因此，在设计神经网络结构时需要权衡这两方面的因素，选择一个适当的模型。
+
+3.选择适当的激活函数：激活函数对神经网络的性能有着重要的影响。ReLU是一种常用的非线性激活函数，它能够增加神经网络的非线性特性并提高性能。
+
+4.选择适当的优化器和损失函数：在在训练过程中，我们使用一种称为经验回放的技术来解决DQN算法中的样本相关问题。具体而言，我们通过将每个状态-动作转换存储在一个固定大小的缓存器中，使模型可以从以前的经验中学习。这种经验重放的方法允许我们从整个经验集合中随机抽取样本进行训练，以减少梯度下降的样本相关性，并增加学习的稳定性。
+
+在优化DQN算法时，我们使用均方误差损失函数作为优化目标，其定义为：
+
+\begin{equation}
+\mathcal{L}(\mathbf{w})=\frac{1}{N} \sum_{i=1}^{N}\left(y_{i}-Q\left(\bm{s}_{i}, \bm{a}_{i} ; \mathbf{w}\right)\right)^{2},
+\end{equation}
+其中$N$是样本数量，$y_i$是目标Q值，可以通过如下方式计算：
+
+\begin{equation}
+y_{i}=r_{i}+\gamma \max {a^{\prime}} Q\left(\bm{s}_{i+1}, a^{\prime} ; \mathbf{w}^{-}\right),
+\end{equation}
+其中$r_i$是在状态$\bm{s}_i$下采取动作$\bm{a}_i$所获得的即时奖励，$\gamma$是折扣因子，$Q(\bm{s}_{i+1},a^{\prime};\mathbf{w}^{-})$是使用目标网络计算的下一个状态的最大Q值。
+
+最后，我们使用优化器（如Adam）来调整神经网络的权重，以最小化损失函数。我们使用的优化器的学习率等超参数的选择和标定对DQN算法的性能有很大的影响。因此，我们需要进行仔细的超参数调优，以找到最优的超参数组合，以提高DQN算法的收敛速度和性能。
+
+
+DQN算法使用一个前馈神经网络来近似状态-动作值函数，该神经网络包括一个输入层、若干个隐藏层和一个输出层。输入层接收状态信息，输出层输出每个动作的状态-动作值函数估计值，隐藏层用于处理输入信息并提取有用的特征。
+
+在代码实现中，我们使用PyTorch框架来定义神经网络。在DQN类的初始化函数中，我们定义了前馈神经网络的结构。它包括四个线性层，分别包含32，64，64和n个节点，其中n是动作的数量。这个结构相对简单，但在实际应用中已经被证明可以取得不错的效果。ReLU函数被用作非线性激活函数，用于增加模型的非线性特性，从而提高性能。
+
+在神经网络的正向传播函数中，我们将输入向量传递给前馈神经网络，并将输出向量通过view函数转换为指定的形状。这里的输入向量是状态向量，输出向量是每个动作的状态-动作值函数的估计值。在训练过程中，我们通过最小化损失函数来调整神经网络的权重，以优化模型的性能。
+
 
 \subsection{超参数的选择与标定}
 
-Hyperparameters play a crucial role in the performance of a DQN model.
+超参数的选择和标定对于强化学习算法的性能至关重要。在本节中，我们将讨论如何选择和标定DQN算法中的超参数，以优化模型的性能。我们以城市交通大脑中的交通出行决策为例，其中的超参数包括GAMMA等。
 
-The learning rate, batch size, discount factor, and other hyperparameters should be carefully selected to optimize the performance of the model.
+GAMMA
+GAMMA是强化学习算法中的一个重要参数，它表示未来奖励的折扣因子。在交通出行决策中，未来的奖励可能取决于目的地的到达时间、旅途的费用等因素。我们通过对训练数据的分析来选择GAMMA的值，以优化算法的性能。在本文中，我们将GAMMA设置为0.99。
 
-The learning rate controls the rate at which the model updates its weights during training.
+BATCH\_SIZE
+BATCH\_SIZE是指每个训练步骤中使用的样本数。在城市交通大脑中，我们通过分析训练数据的大小和计算资源的限制来选择BATCH\_SIZE的值。在本文中，我们将BATCH\_SIZE设置为5。
 
-The batch size determines how many state-action pairs are processed in each training iteration.
+REPLAY\_SIZE
+REPLAY\_SIZE是指回放缓冲区的最大容量。在交通出行决策中，我们需要存储大量的训练数据，以便在模型训练过程中进行重复利用。我们通过分析训练数据的大小和计算资源的限制来选择REPLAY\_SIZE的值。在本文中，我们将REPLAY\_SIZE设置为40。
 
-The discount factor determines the balance between immediate and future rewards in the Q-value calculation.
+LEARNING\_RATE
+LEARNING\_RATE是指模型在训练过程中更新权重的速度。在城市交通大脑中，我们需要让模型能够快速学习最优策略，同时避免出现过拟合现象。我们通过分析训练数据的复杂度和计算资源的限制来选择LEARNING\_RATE的值。在本文中，我们将LEARNING\_RATE设置为1e-4。
 
-Other hyperparameters, such as the size of the replay buffer or the frequency of target network updates, can also have a significant impact on model performance.
+SYNC\_TARGET\_FRAMES
+SYNC\_TARGET\_FRAMES是指将模型权重从训练模型同步到目标模型的频率。在交通出行决策中，我们需要让模型能够快速学习最优策略，并在训练过程中避免出现过拟合现象。我们通过分析训练数据的复杂度和计算资源的限制来选择SYNC\_TARGET\_FRAMES的值。在本文中，我们将SYNC\_TARGET\_FRAMES设置为5。
+
+REPLAY\_START\_SIZE
+REPLAY\_START\_SIZE是指开始训练前等待填充回放缓冲区的帧数。在城市交通大除了以上列出的超参数，还有一些重要的超参数需要考虑。其中一个关键超参数是目标网络更新的频率。目标网络是一个副本神经网络，其权重用于计算目标Q值，以减少价值估计的震荡。在每个固定的时间步长，我们将主神经网络的权重复制到目标神经网络，以保持目标网络的更新。此超参数的值通常在1000至10000个时间步之间。
+
+另一个重要的超参数是回放缓冲区的大小。在训练过程中，我们通过将经验元组（状态、动作、奖励和下一状态）存储在回放缓冲区中来减少经验的相关性，并从中随机采样小批量的经验元组用于更新模型。缓冲区大小通常设置为几千到几十万个经验元组，具体取决于问题的复杂性和计算资源的可用性。
+
+另一个重要的超参数是学习速率，它指定模型权重的更新速率。学习速率通常设置在$10^{-5}$到$10^{-3}$的范围内，具体取决于问题的复杂性和数据集的规模。
+
+在DQN算法中，为了平衡探索和利用的策略，我们通常采用ε-贪心策略，即以ε的概率选择一个随机动作，以1-ε的概率选择Q值最大的动作。因此，ε值的选择对于算法的性能至关重要。
+
+在代码中，我们设置了四个与ε相关的超参数。EPSILON\_START是初始的ε值，EPSILON\_FINAL是ε的最终值，EPSILONDECAY\_LAST\_FRAME是ε值从初始值到最终值所需的帧数。其中，帧数是指模型与环境交互的次数。max\_episode则是最大的训练轮数，用于限制训练时间。
+
+另外，超参数的选择和调整需要经验和实验。在实际应用中，我们可以通过网格搜索或随机搜索等方法来寻找最优的超参数组合。值得注意的是，超参数的选择需要根据具体的问题和数据集进行调整。
+
+综上所述，DQN算法中的超参数选择和标定是一个复杂的过程，需要针对特定的问题进行调整。通过对超参数进行合理选择和调整，可以提高算法的性能和收敛速度。
 
 \subsection{模型的优化}
 
-Various optimization techniques can be used to improve the stability and convergence of a DQN model.
+强化学习中的DQN算法是一种经典的基于价值的强化学习算法，它通过神经网络来逼近状态-动作值函数，从而得到最优策略。在模型优化方面，DQN算法引入了多种技术，包括经验回放、目标网络、优先级经验回放和奖励塑形等，以提高模型的稳定性和性能。
 
-Experience replay is a technique where past experiences are stored in a buffer and sampled randomly during training.
+1.经验回放（Experience replay）
+经验回放是一种重要的优化技术，它解决了DQN算法中的样本相关性问题。在传统的在线学习中，神经网络每次只更新一个样本的参数，因此相邻样本的训练数据之间存在强相关性，容易导致模型的过拟合。经验回放的核心思想是将所有样本存储到经验池中，并从中随机采样一批样本进行训练。这样可以打破样本之间的相关性，减少过拟合的风险，提高模型的泛化能力。
 
-Target networks can be used to estimate the Q-values of the next state to improve stability during training.
+2.目标网络（Target networks）
+目标网络是一种防止DQN算法中目标值的剧烈变化的技术。在传统的DQN算法中，目标值是使用当前网络计算得出的，因此目标值随着网络参数的更新而不断变化，容易导致模型不稳定。为了解决这个问题，目标网络的主要思想是使用一个独立的神经网络来计算目标值，该网络的参数较为稳定，不随着训练过程中的更新而变化。具体而言，目标网络的参数定期地从当前网络中复制而来，以减缓目标值的变化速度，提高模型的稳定性。
 
-Prioritized experience replay can be used to sample more important experiences more frequently.
+3.优先级经验回放
+优先级经验回放(Prioritized Experience Replay, PER)是一种用于以非均匀方式对DQN模型进行训练的技术。PER的基本思想是优先处理那些更重要的、通常具有更大TD误差的经验，以加速学习。
 
-Reward shaping can be used to modify the reward function to incentivize certain behaviors.
+为了实现PER，需要为回放缓冲区中的每个经验分配一个优先级分数，用于确定在训练过程中抽样这个经验的概率。经验的优先级分数与它的TD误差的绝对值成正比，因为更大的TD误差意味着该经验更具信息量，应该更频繁地被抽样。
 
-The selection and use of these optimization techniques can depend on the specific problem and the network architecture used.
+然而，由于优先级分数没有归一化，一些具有非常高优先级分数的经验可能会支配抽样过程，导致学习偏差。为了解决这个问题，采用了一种称为比例优先级的技术，通过将优先级分数提高到一个幂$\alpha$的方，来调整经验的优先级分数。这个幂可以调整，以平衡优先处理高TD误差经验和防止单个经验支配抽样过程之间的关系。
+
+4.奖励塑形
+奖励塑形(Reward Shaping)是一种用于修改代理在训练期间接收到的奖励信号以改善学习的技术。在传统的强化学习中，奖励信号往往很稀疏，并且只在一个周期的末尾给出。这可能会导致学习缓慢，难以探索状态-动作空间。
+
+奖励塑形涉及在周期不同的时间步骤中添加额外的奖励，以引导代理朝着所期望的行为方向进行。例如，在迷宫导航任务中，可以给出一定的奖励，当代理离目标更近时，即使目标尚未达成。这可以帮助代理更有效地探索环境并更快地学习。
+
+但是，必须小心设计奖励塑形函数，以确保它不会引入意外的偏差或鼓励代理利用任务中的漏洞。此外，奖励塑形可能需要花费较多的计算时间，并可能需要领域专业知识来设计有效的奖励函数。
 
 \section{模型的训练与评估}
 
