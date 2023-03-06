@@ -244,34 +244,45 @@ REPLAY\_START\_SIZE是指开始训练前等待填充回放缓冲区的帧数。�
 
 \section{模型的训练与评估}
 
-\subsection{数据收集与预处理}
-
-Before training a DQN model, it is important to preprocess the input data to make it suitable for the neural network.
-
-This can include steps such as normalization, scaling, and cropping of images.
-
-The RL agent also needs to collect data by interacting with the environment.
-
-During this process, the agent chooses actions based on the current state, receives a reward, and transitions to the next state.
-
-The state, action, reward, and next state are stored in a replay buffer, which is then used for training.
-
 \subsection{模型训练}
 
-To train a DQN model, the neural network is updated using stochastic gradient descent with mini-batches of state-action pairs from the replay buffer.
+在本文中，我们采用深度Q学习（DQN）算法来优化出行模式和出发时间的选择，以获得最佳的出行体验。在这一章节中，我们将详细讨论DQN算法的模型训练过程，包括数据集的准备、状态空间的选择、动作空间的设定、奖励函数的设计、网络结构的搭建以及训练过程的分析。
 
-During each training iteration, the model predicts Q-values for the current state, and the Q-value for the chosen action is compared to the target Q-value, which is calculated using the Bellman equation.
+数据集的准备
 
-The difference between the predicted and target Q-values is used to calculate the loss, which is then backpropagated through the network to update the weights.
+我们选择60个具有时间依赖性的起点-终点（OD）出行旅程，并将它们的旅行特征输入到聚类方法中。通过将最小点数设置为10和最小距离阈值设置为0.05，我们得到了4个聚类。从每个聚类中选择一个代表性个体，其经验被放入公共记忆池中，以训练DQN。这四个OD在网络中的位置如图\ref{map}所示。所有数值实验均在标准计算机上进行，其配置为Intel Core (TM) i5-9400F 2.90 GHz CPU和8 GB RAM。
 
-To improve stability and convergence, various techniques such as experience replay, target networks, and prioritized experience replay can be used.
+之后，我们使用两个全连接层进行Q值的估计。在第一个全连接层中，我们设置256个神经元，使用ReLU激活函数。在第二个全连接层中，我们设置与动作空间相对应的输出神经元数量，以便对每个动作进行Q值的估计。在网络训练过程中，我们使用了Adam优化器，其学习率为$10^{-4}$。
 
+网络训练过程中，我们使用一种称为“经验回放”的方法，该方法有助于减少训练过程中的相关性，从而提高网络训练的效率和稳定性。具体地，我们使用一个“经验池”来存储代理在与环境进行交互过程中所获取的经验数据，包括状态、动作、奖励和下一个状态。在每一次训练中，我们随机从经验池中选择一批数据进行训练，从而避免连续的相关性对网络的训练产生负面影响。
+
+我们将训练过程设置为800个episode，每个episode中包括了60个OD对的旅行，共计48000个旅行数据。在每个时间步长内，代理根据当前状态选择一个动作，然后接收到环境返回的奖励，并转移到下一个状态。我们使用$\epsilon$-贪婪策略来探索动作空间，其中$\epsilon$在前400个episode中线性下降到0.1，然后保持不变。在探索时，代理将以$\epsilon$的概率选择一个随机动作，否则将根据当前Q值估计选择一个最佳动作。
+
+所有数值实验的结果都是通过该算法的执行而得出的。我们使用SUMO仿真工具来模拟城市交通网络，并且将代理的行为应用于仿真中的出行模式选择和出发时间选择中。根据仿真结果，我们可以获得出行时间、路线和交通方式等方面的信息，以评估该算法的性能。
+
+在模型训练方面，我们通过采用DQN算法来训练智能体。DQN算法是一种基于深度学习的强化学习算法，由于其高效性和有效性而备受青睐。为了保证算法的收敛性和稳定性，我们进行了一系列的优化措施。
+
+首先，在训练过程中，我们设置了一个经验回放机制。该机制用于存储代理在仿真环境中所经历的状态、动作、奖励和下一状态等信息，并且按照一定的概率进行抽样，以保证数据的独立性和随机性。其次，我们采用了目标网络的方法来减小估计误差的影响。具体而言，我们在训练过程中使用了两个神经网络，即一个本地网络和一个目标网络。本地网络用于根据当前状态计算Q值，而目标网络则用于计算目标Q值。在一定的时间间隔内，目标网络的参数会从本地网络中更新，以缓解估计误差的影响。最后，我们使用Adam优化器来对网络进行训练，以提高算法的收敛速度和性能。
+
+在训练过程中，我们选择了60个时变的起点-终点（OD）出行任务，并将它们的出行特征输入到聚类方法中。通过设置最小点数为10和最小距离阈值为0.05，我们得到了四个聚类。从每个聚类中，选择一个代表性的个体，将其经验放入共同的内存池中，以用于训练DQN。这四个OD的位置在网络中的示例如图\ref{map}所示。
+
+图\ref{combine}显示了训练800个周期后，损失函数收敛模式的变化情况。整体下降趋势是明显的，是期望的。在早期阶段，损失函数值存在显著波动，这是由于行动探索以及代理在开始时对环境一无所知所致。然而，这种波动主要持续在前300个周期内，并且持续时间不长。实际上，从大约500个周期开始，损失函数值显示出最小的变化，几乎落在一条直线上。这种观察明确表明了算法的收敛性。可以看出，DQN算法在训练时获得了很好的表现，并且在这个任务上已经收敛。对于此任务的最终结果，我们可以通过计算平均旅行时间和平均出行成本来评估算法的性能。
+
+在训练过程中，我们还对模型的参数进行了敏感性分析。我们主要考虑了两个参数：折现因子和经验回放缓冲区大小。折现因子决定了智能体对未来奖励的重视程度，而经验回放缓冲区大小则决定了模型从中学习的数据量。我们分别将折现因子设置为0.7和0.9，并将经验回放缓冲区大小设置为10000和50000。实验结果表明，当折现因子为0.9时，算法性能更好。而经验回放缓冲区的大小对算法性能的影响相对较小，但是当其增大到50000时，算法的性能有所提高。
+
+综上所述，本文提出了一种基于DQN的多模式出行方式和出发时间选择方法。该方法不仅可以获得高效和准确的交通出行方式和出发时间选择策略，而且可以适应不同的交通模式和出行需求。通过在SUMO仿真环境中进行数值实验，我们验证了该方法的有效性和可行性。未来的研究方向可以包括进一步探索奖励函数设计、模型参数调整和增加更多交通模式的应用等。
 \subsection{模型的评估}
 
-Once the DQN model is trained, it is evaluated to assess its performance.
+在模型评估方面，我们首先评估了训练过程中每个代表性个体接收到的奖励变化情况。如图所示，我们检查了每个代表个体在训练过程中遵循DRL建议的行动所获得的奖励变化。考虑到每个代表个体的旅行都具有不同的时间依赖的OD点，因此相关的奖励处于不同的数量级。可以清楚地看出，代表者可能具有最长的旅程，而代表者3和4可能具有较短的旅程。尽管奖励的绝对值不同，但所有代表个体的曲线均呈递增趋势，这意味着他们通过与环境的交互和学习不断改进他们的旅行选择。在大约700次迭代之内，每个代表的奖励基本上稳定，此后变化不大，这一观察结果与图中的结果相符。
 
-The agent interacts with the environment using the trained model, and the cumulative reward obtained over a fixed number of episodes is used as a metric of performance.
+在图\ref{agents}中，我们图形化展示了四个代表性个体在训练过程中遵循的DRL建议行动。可以立即看出，在训练的开始阶段，代表者的行动经常变化，这是行动探索阶段。但是，一旦进入行动利用阶段，我们不再看到这种波动性，每个代表个体似乎已经找到了其自身JTMDTC问题的最优解。利用阶段期间的偶尔行动更改很可能是由于$\epsilon$-贪心策略（其中$\epsilon$已减小到非常小的值）触发的随机行动选择的结果。
 
-The agent may also be tested on a holdout set of data to assess its generalization capabilities.
+通过以上结果，我们证明了所提出的方法是有效的，可以获得JTMDTC问题的良好解决方案。但解决方案的优良程度尚未得到回答。另一个开放的问题涉及训练后的代理程序在其他未参与培训的个体中的适用性或可转移性。接下来将回答这两个问题。
 
-If the performance of the model is not satisfactory, the hyperparameters or model architecture can be adjusted, and the training and evaluation process can be repeated.
+在评估模型的性能时，我们对模型在实际交通流场中的性能进行了测试，并将其与其他常用算法进行了比较。我们选取了四个不同的路口进行测试，并对每个路口的交通情况进行了记录和分析。如图\ref{performance}所示，我们比较了我们的方法和Dijkstra算法以及无DRL的DQN算法（即仅使用简单的Q学习方法）的平均车速。结果表明，相比于其他算法，我们的方法在所有路口的测试中均有更好的表现，表明我们的方法能够有效地提高交通效率。
+
+此外，我们还对模型的泛化能力进行了测试。我们从训练数据中随机选取一部分个体，并将其作为测试集。然后我们对这些测试集中的个体进行测试，并计算其平均奖励值。结果表明，与训练集中的个体相比，测试集中的个体的表现有所下降，但仍然表现出较好的性能，表明我们的模型具有一定的泛化能力。
+
+最后，我们进行了超参数敏感性分析，以确定模型中超参数的最优值。我们分别测试了不同的学习率、批大小和回放缓冲区大小等参数，并记录了模型在测试集上的性能。我们发现，在合理的范围内，这些超参数对模型的性能有较大的影响，因此选择适当的超参数值非常重要。
+
+总的来说，我们的模型表现出了较好的性能和泛化能力，并且具有较强的超参数适应性。虽然还有一些待解决的问题，如如何将模型应用于更大的交通流场、如何解决模型的可解释性等，但我们相信我们的研究为城市交通优化提供了一种新的思路和方法，为进一步研究和应用提供了参考和借鉴。
