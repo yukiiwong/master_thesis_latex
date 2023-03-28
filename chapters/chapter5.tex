@@ -136,6 +136,22 @@ $o$  & 燃油价格（元/公里）                                 & 0.56  \\
 
 在图\ref{agents}中，我们图形化展示了四个代表性个体在训练过程中遵循的DRL建议行动。可以立即看出，在训练的开始阶段，代表者的行动经常变化，这是行动探索阶段。但是，一旦进入行动利用阶段，我们不再看到这种波动性，每个代表个体似乎已经找到了其自身JTMDTC问题的最优解。利用阶段期间的偶尔行动更改很可能是由于$\varepsilon$-贪心策略（其中$\varepsilon$已减小到非常小的值）触发的随机行动选择的结果。
 
+
+\begin{figure}[htbp]
+  \centering
+  \subfloat[Representative \#1]{\includegraphics[width=.5\textwidth]{figures/content/action1.png}}
+  \quad\quad
+  \subfloat[Representative \#2]{\includegraphics[width=.5\textwidth]{figures/content/action2.png}}
+  \\
+  \subfloat[Representative \#3]{\includegraphics[width=.5\textwidth]{figures/content/action3.png}}
+  \quad\quad
+  \subfloat[Representative \#4]{\includegraphics[width=.5\textwidth]{figures/content/action4.png}}
+  \caption{Action selections of the four representative individuals.}
+  \label{agents}
+\end{figure}
+
+
+
 通过以上结果，我们证明了所提出的方法是有效的，可以获得JTMDTC问题的良好解决方案。但解决方案的优良程度尚未得到回答。另一个开放的问题涉及训练后的代理程序在其他未参与培训的个体中的适用性或可转移性。接下来将回答这两个问题。
 
 在评估模型的性能时，我们对模型在实际交通流场中的性能进行了测试，并将其与其他常用算法进行了比较。我们选取了四个不同的路口进行测试，并对每个路口的交通情况进行了记录和分析。如图\ref{performance}所示，我们比较了我们的方法和Dijkstra算法以及无DRL的DQN算法（即仅使用简单的Q学习方法）的平均车速。结果表明，相比于其他算法，我们的方法在所有路口的测试中均有更好的表现，表明我们的方法能够有效地提高交通效率。
