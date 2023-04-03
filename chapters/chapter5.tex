@@ -7,6 +7,7 @@
 
 
 \section{模型的训练与分析}
+\label{section:5.1}
 
 在本节中，将对上一章提出的算法模型进行训练，并对训练结果进行详细分析。通过观察训练过程中的学习曲线和计算累积奖励，可以深入了解模型在训练过程中的性能变化和整体表现。学习曲线和累积奖励作为评估深度强化学习模型表现的关键指标，能够从多方面反映模型性能。学习曲线揭示了模型在训练过程中的性能变化，有助于判断模型收敛速度和稳定性；累积奖励则反映智能体在任务中的整体表现，可以用于比较不同模型或算法的相对性能优劣。此外，这些指标还有助于评估模型的泛化能力和算法效率。观察学习曲线和累积奖励在训练集与测试集上的表现，可以判断模型是否适应新环境；同时，学习曲线还能反映算法在训练过程中的效率差异。因此，这些指标为模型优化、算法选择和参数调整提供了重要依据。
 
@@ -157,6 +158,7 @@ $o$  & 燃油价格（元/公里）                                 & 0.56  \\
 
 
 \section{模型的评估}
+\label{section:5.2}
 
 在本节中，将对基于深度强化学习的出行模式与时间选择模型进行评估，其目的在于验证模型的有效性和泛化能力。本节将分别从模型泛化能力检验、与传统方法的对比和模型参数的灵敏度分析三个方面对模型进行评估。在泛化能力检验中，使用测试集对模型进行测试，以验证其在不同数据集上的表现；在对比传统方法方面，将使用传统的离散选择方法与深度强化学习方法进行对比，并分析两者的优劣势；最后，在参数灵敏度分析中，将探讨模型参数对模型表现的影响，以确定模型最优参数。
 
@@ -169,21 +171,21 @@ $o$  & 燃油价格（元/公里）                                 & 0.56  \\
 为了更全面地了解所有50个测试个体的比较情况，找到了朴素法为每个测试个体获得的最大奖励，将其视为该个体出行模式和出发时间问题的近似最优解。将所提出方法和传统DQN给出的解决方案与这个参考值进行比较，可以从全局角度观察性能差异。图\ref{com}(d)显示，本文方法的大部分解决方案（超过40个）超过了参考奖励值的95\%，这意味着这些解决方案接近最优。然而，对于普通的DQN来说，情况并非如此。只有大约30\%的解决方案超过了同一参考值的95\%，还有相当多的解决方案甚至低于参考值的60\%。这些比较结果表明，所提出的方法在解决许多个体的出行模式和出发时间问题时具有有效性，并且代表在完成这个任务中所发挥的重要作用。由于测试个体并不是训练的一部分，结果表明所提出方法具有良好的可迁移性。
 
 \begin{figure}[htbp]
-  \subfloat[智能体1]{\includegraphics[width=.5\textwidth]{figures/content/com1.png}}
+  \subfloat[]{\includegraphics[width=.5\textwidth]{figures/content/com1.png}}
   \quad\quad
-  \subfloat[智能体2]{\includegraphics[width=.5\textwidth]{figures/content/com2.png}}
+  \subfloat[]{\includegraphics[width=.5\textwidth]{figures/content/com2.png}}
   \\
-  \subfloat[智能体3]{\includegraphics[width=.5\textwidth]{figures/content/com3.png}}
+  \subfloat[]{\includegraphics[width=.5\textwidth]{figures/content/com3.png}}
   \quad\quad
-  \subfloat[智能体4]{\includegraphics[width=.5\textwidth]{figures/content/com4.png}}
-  \caption{训练过程中代表智能体的动作选择变化}
+  \subfloat[]{\includegraphics[width=.5\textwidth]{figures/content/com4.png}}
+  \caption{选定测试个体的性能比较以及与朴素法最大奖励值的比较}
   \label{com}
 \end{figure}
 
 在本次实验中，随机选取了一部分个体，并将其用作测试集。然后，对这些测试集中的个体进行了测试，并计算了它们的平均奖励值。结果表明，测试集中的个体的表现略低于训练集中的个体，但仍表现出较好的性能。这表明所提出的方法具有一定的泛化能力，即能够适应一些新的情况并产生有意义的结果。
 
 
-\subsection{部分信息的模型检验}
+\subsection{部分信息感知的模型检验}
 
 在现实世界中，人们在做出决策时，通常不会拥有完全的信息，例如，可能无法准确地了解周围环境、其他人的行为、交通状况等。因此，仅仅依靠部分信息进行决策，可能会导致更差的行动选择。为了比较所提出的深度强化学习方法的性能，此小节引入了另外两种模型，以考虑在部分信息的情况下，深度强化学习方法是否仍然是有效的。
 
@@ -193,7 +195,7 @@ $o$  & 燃油价格（元/公里）                                 & 0.56  \\
 
 使用前文中在信息完全的情况下，由提出的方法得到的个体出行选择作为基准线，根据其来比较其他模型的性能。考虑了三个性能评估和比较指标。除了奖励值之外，另外两个是负对数损失（NLL）和Jaccard指数。NLL通常用于评估分类任务中的模型性能，特别是在类别不平衡的情况下。在本文中，使用NLL作为评价指标，可以测量每种模型的预测能力，即它们在给定历史信息的情况下是否能够正确地预测个体的行动选择。NLL的较低值表示模型更准确地预测了行动选择，因此较低的NLL值是期望的。Jaccard指数是一种测量相似性的指标。在本文中，它可以测量每个模型产生的行动选择与基准线之间的相似程度。基准线是在信息完全的情况下，由提出的方法得到的个体出行选择。因此，Jaccard指数可以反映其他模型相对于基线的优化水平。值越高表示其他模型的行动选择越接近基线，因此较高的Jaccard指数是期望的。这两个指标都衡量其他模型产生的行动与基线获得的行动之间的接近程度或相似程度。因此，它们可以反映其他模型相对于基线的优化水平。
 
-表\ref{eva}总结了三个性能指标的比较结果。如预期的那样，在信息完全的情况下，所提出的方法提供了实现尽可能多的奖励的最佳性能。所有其他模型的性能都较差，通过比较平均奖励值就能看出这一点，这些值都低于基线的奖励值。这种趋势也适用于NLL和Jaccard指数。尽管如此，在部分信息的情况下，所提出的方法仍然表现出比一阶MC模型和MNL模型略好的性能，这表明即使存在部分信息，所提出的方法仍然是有效的。
+表\ref{eva}中展示了三个性能指标的比较结果。正如预期的那样，在信息完全的情况下，所提出的方法表现出了最佳性能，可以获得尽可能多的奖励。相比之下，其他所有模型的性能都较差，这可以通过比较平均奖励值来看出，这些值都低于基线的奖励值，类似的趋势也反映在NLL和Jaccard指数上。然而，即使在部分信息的情况下，所提出的方法仍然表现出比一阶MC模型和MNL模型略好的性能，这表明所提出的方法即使在存在部分信息的情况下，仍然是有效的。
 
 \begin{table}[htbp]
 \centering
@@ -207,43 +209,43 @@ $o$  & 燃油价格（元/公里）                                 & 0.56  \\
 \toprule
 模型 & NLL & 平均回报 & 准确度 \\
 \midrule
-一阶Markov链模型 & 19.23 & 1,354 & 0.24 \\
-离散选择模型 & 24.17 & 1,217 & 0.23 \\
-部分信息下的提出方法 & 17.31 & 1,449 & 0.29 \\
-完全信息下的提出方法（基线） & \textbackslash{} & 1,735 & \textbackslash{} \\
+一阶MC模型 & 19.23 & 1,354 & 0.24 \\
+MNL模型 & 24.17 & 1,217 & 0.23 \\
+部分信息下的DRL方法 & 17.31 & 1,449 & 0.29 \\
+完全信息下的DRL方法（基线） & \textbackslash{} & 1,735 & \textbackslash{} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \subsection{模型参数的灵敏性分析}
 
-我们现在进行两个敏感性分析，以研究所提出方法在模型参数变化时的性能变化。第一个参数是代表数量，第二个参数是训练个体的集合。为了看到前者的影响，我们进行了进一步的实验，分别使用1、10、20和40个代表。我们保持相同的实验设置，将60个个体的时间依赖OD行程聚类成上述数字，以选择训练代表，而其他50个测试个体则用于评估和比较。同样，蛮力方法作为参考。
+为了探究本研究所提出的方法在模型参数变化时的性能变化，将进行两个敏感性分析。第一个参数是训练智能体数量的变化，第二个参数是训练个体的群组的选择。
 
-比较结果总结在表\ref{cluster_size}中。由于内存溢出，40个代表的实验无法在同一台机器上完成，因此没有报告结果。随着代表数量的增加，所需的训练或计算时间增加，这是预期的。然而，代表数量的增加确实会导致更好的奖励。将一个代表转变为四个代表，奖励得到了最大的提高。进一步将该数字增加到10或20并不能显著提高奖励。这个结果表明，增加代表数量不一定划算。实际上，少量代表已经可以在合理的计算时间内产生相当好的结果。使用蛮力方法得到的最大奖励作为参考值，我们比较了所提出的方法所给出的奖励高于参考值95％以上的测试个体数量。如预期的那样，对于4、10和20个代表，这个数字保持较大且变化很小。图6进一步显示了对于不同数量的代表，四个选定测试个体结果的比较。只有一个代表显然不足以击败蛮力方法，而四个或更多代表则产生了有希望的结果。
+为了探究前者的影响，在进一步的实验中，分别使用1、10、20和40个智能体进行训练。保持相同的实验设置，将60个个体的OD行程聚类成上述数字，并用另外50个测试个体则用于评估和比较。同样地，将朴素法作为参考进行比较。比较结果总结在表\ref{cluster_size}中。由于内存溢出，训练40个智能体的实验无法在本实验计算机上完成，因此没有报告结果。从表中可以看出，随着训练智能体数量的增加，所需的训练或计算时间增加，并且智能体数量的增加确实会导致更好的奖励。将一个智能体转变为四个智能体，奖励得到了最大的提高。进一步将该数字增加到10或20并不能显著提高奖励。这个结果表明，增加代表智能体数量相较于计算成本不一定合理。实际上，少量智能体已经可以在合理的计算时间内产生相当好的结果。使用朴素法得到的最大奖励作为参考值，比较所提出的方法所给出的奖励高于参考值95％以上的测试个体数量。如预期的那样，对于4、10和20个智能体，这个数字保持较大且变化很小。图\ref{agents}展示了对于不同数量的智能体，八个选定测试个体结果的比较。只有一个智能体显然不足以超过朴素法，而四个或更多智能体则有更良好的结果。
 
 \begin{figure}[htbp]
-  \subfloat[智能体1]{\includegraphics[width=.4\textwidth]{figures/content/agents/agent1.png}}
+  \subfloat{\includegraphics[width=.45\textwidth]{figures/content/agents/agent1.png}}
   \quad\quad
-  \subfloat[智能体2]{\includegraphics[width=.4\textwidth]{figures/content/agents/agent2.png}}
+  \subfloat{\includegraphics[width=.45\textwidth]{figures/content/agents/agent2.png}}
   \\
-  \subfloat[智能体3]{\includegraphics[width=.4\textwidth]{figures/content/agents/agent3.png}}
+  \subfloat{\includegraphics[width=.45\textwidth]{figures/content/agents/agent3.png}}
   \quad\quad
-  \subfloat[智能体4]{\includegraphics[width=.4\textwidth]{figures/content/agents/agent4.png}}
+  \subfloat{\includegraphics[width=.45\textwidth]{figures/content/agents/agent4.png}}
   \\
-  \subfloat[智能体1]{\includegraphics[width=.4\textwidth]{figures/content/agents/agent5.png}}
+  \subfloat{\includegraphics[width=.45\textwidth]{figures/content/agents/agent5.png}}
   \quad\quad
-  \subfloat[智能体2]{\includegraphics[width=.4\textwidth]{figures/content/agents/agent6.png}}
+  \subfloat{\includegraphics[width=.45\textwidth]{figures/content/agents/agent6.png}}
   \\
-  \subfloat[智能体1]{\includegraphics[width=.4\textwidth]{figures/content/agents/agent7.png}}
+  \subfloat{\includegraphics[width=.45\textwidth]{figures/content/agents/agent7.png}}
   \quad\quad
-  \subfloat[智能体2]{\includegraphics[width=.4\textwidth]{figures/content/agents/agent8.png}}
-  \caption{训练过程中代表智能体的动作选择变化}
+  \subfloat{\includegraphics[width=.45\textwidth]{figures/content/agents/agent8.png}}
+  \caption{不同智能体数量训练下的八个测试个体测试结果}
   \label{agents}
 \end{figure}
 
 \begin{table}[htbp]
 \centering
-\caption{不同代表点数量下所提出方法的性能变化}
+\caption{不同智能体数量训练下所提出方法的性能变化}
 \label{cluster_size}
 \renewcommand{\arraystretch}{1.2} % 使表格行间距加大1.2倍
 \setlength{\tabcolsep}{6mm} % 设置列间距为6mm
@@ -258,32 +260,39 @@ $o$  & 燃油价格（元/公里）                                 & 0.56  \\
 \end{tabular}
 \end{table}
 
+\begin{figure}
+  \centering
+  \includegraphics[width=.75\linewidth]{figures/content/number.png}
+  \caption{不同智能体数量训练下与朴素法最大奖励值的比较}
+  \label{agent_map}
+\end{figure}
 
-为了显示所提出方法的性能并不因训练个体的不同而发生显著变化，我们使用不同的训练个体集合进行另一组实验，使用四个代表对DQN进行训练，其余的实验设置保持不变。表\ref{cluster_agents}总结了这样四个实验的结果。由于不同的训练个体集合不会改变计算时间（对于四个代表，计算时间为22小时），因此不再报告这个度量。从结果中可以看出，所提出方法的性能是稳定的，不会因为用于训练的代表个体不同而表现出显著的变化。类似于图\ref{appendixa1}，图\ref{appendixb1}显示了当使用不同的训练个体集合时，四个选定测试个体结果的比较，表明所提出的方法对代表个体的选择具有鲁棒性。这些结果表明，所提出的方法是有效的，不会受到训练代表个体集合的影响。从这些敏感性分析中可以得出结论，所提出的方法在实际应用中具有很强的可操作性和鲁棒性。通过将模型应用于新的时间依赖 OD 数据集并比较与传统模型和暴力方法的性能，我们证明了该方法在解决 JTMDTC 问题方面的有效性。
+
+为了显示所提出方法的性能并不因每个类别中挑选训练个体的不同而发生显著变化，使用不同的训练个体集合进行另一组实验，挑选在每个类别中挑选四个智能体进行训练，其余的实验设置保持不变。表\ref{cluster_agents}列出了这样四个实验的结果。由于不同的训练个体集合不会改变计算时间（对于四个代表，计算时间为22小时），因此不再报告这个度量。从结果中可以看出，所提出方法的性能是稳定的，不会因为用于训练的代表个体不同而表现出显著的变化。类似于图\ref{agents}，图\ref{size}显示了当使用不同的训练个体集合时，八个选定测试个体结果的比较，表明所提出的方法对代表个体的选择具有鲁棒性。这些结果表明，所提出的方法是有效的，不会受到训练代表个体集合的影响。从这些敏感性分析中可以得出结论，所提出的方法在实际应用中具有很强的可操作性和鲁棒性。通过将模型应用于新的时间依赖 OD 数据集并比较与传统模型和暴力方法的性能，证明了该方法在解决模式选择与出发时间问题方面的有效性。
 
 \begin{figure}[htbp]
-  \subfloat[智能体1]{\includegraphics[width=.4\textwidth]{figures/content/size/size1.png}}
+  \subfloat{\includegraphics[width=.45\textwidth]{figures/content/size/size1.png}}
   \quad\quad
-  \subfloat[智能体2]{\includegraphics[width=.4\textwidth]{figures/content/size/size2.png}}
+  \subfloat{\includegraphics[width=.45\textwidth]{figures/content/size/size2.png}}
   \\
-  \subfloat[智能体3]{\includegraphics[width=.4\textwidth]{figures/content/size/size3.png}}
+  \subfloat{\includegraphics[width=.45\textwidth]{figures/content/size/size3.png}}
   \quad\quad
-  \subfloat[智能体4]{\includegraphics[width=.4\textwidth]{figures/content/size/size4.png}}
+  \subfloat{\includegraphics[width=.45\textwidth]{figures/content/size/size4.png}}
   \\
-  \subfloat[智能体1]{\includegraphics[width=.4\textwidth]{figures/content/size/size5.png}}
+  \subfloat{\includegraphics[width=.45\textwidth]{figures/content/size/size5.png}}
   \quad\quad
-  \subfloat[智能体2]{\includegraphics[width=.4\textwidth]{figures/content/size/size6.png}}
+  \subfloat{\includegraphics[width=.45\textwidth]{figures/content/size/size6.png}}
   \\
-  \subfloat[智能体1]{\includegraphics[width=.4\textwidth]{figures/content/size/size7.png}}
+  \subfloat{\includegraphics[width=.45\textwidth]{figures/content/size/size7.png}}
   \quad\quad
-  \subfloat[智能体2]{\includegraphics[width=.4\textwidth]{figures/content/size/size8.png}}
-  \caption{训练过程中代表智能体的动作选择变化}
-  \label{agents}
+  \subfloat{\includegraphics[width=.45\textwidth]{figures/content/size/size8.png}}
+  \caption{不同智能体群组训练下的八个测试个体测试结果}
+  \label{size}
 \end{figure}
 
 \begin{table}[htbp]
 \centering
-\caption{使用不同的训练个体集时，所提出方法的性能变化。}
+\caption{不同智能体群组训练下所提出方法的性能变化}
 \label{cluster_agents}
 \renewcommand{\arraystretch}{1.2}
 \setlength{\tabcolsep}{6mm}
@@ -298,3 +307,14 @@ $o$  & 燃油价格（元/公里）                                 & 0.56  \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=.65\linewidth]{figures/content/set.png}
+  \caption{不同智能体群组训练下与朴素法最大奖励值的比较}
+  \label{agent_map}
+\end{figure}
+
+\section{本章小结}
+
+本章主要介绍了针对所提出的基于深度强化学习方法的训练以及评估。在小节\ref{section:5.1}中介绍了实验场景的设置和智能体的聚类与选取方法，然后详细讨论了模型的训练过程及结果分析，在小节\ref{section:5.2}中对实验结果进行了全面的模型评估，包括与传统DQN方法的对比、各测试个体的性能分析以及模型的泛化能力和灵敏性分析，也包含了模型的最优解、部分信息感知模型检验等多个方面。通过实验得出结论，所提出的基于深度强化学习的模式与出发时间选择方法在交通出行领域中具有很好的应用价值和实际意义。在实验中，该方法在解决许多测试个体的出行模式和出发时间问题时都具有较好的效果，并且相较于传统DQN方法和朴素法，能够更快地收敛到最优解。同时，模型的泛化能力和灵敏性也在一定程度上得到了验证。在未来的研究中，可以进一步优化模型的结构和参数，提高模型的性能和适用范围，以更好地应对实际问题的挑战。
