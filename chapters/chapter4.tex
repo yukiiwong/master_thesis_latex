@@ -188,7 +188,7 @@ f=\mathbb{I}(\text { bus }) \cdot f_{\text {bus }}+\mathbb{I}(\text { subway }) 
 
 图\ref{neuralnet}是本文深度Q网络中的神经网络结构示意图。在代码实现中，使用PyTorch框架来定义神经网络。在DQN类的初始化函数中，定义了前馈神经网络的结构。它包括四个线性层，分别包含32，64，64和n个节点，其中n是动作的数量。这个结构相对简单，在实际应用中已经被证明可以取得不错的效果。
 
-\begin{figure}[H]
+\begin{figure}
   \centering
   \includegraphics[width=.75\linewidth]{figures/content/neuralnet.png}
   \caption{神经网络结构示意图}
@@ -263,7 +263,7 @@ MAX\_EPISODE & 800 & 最大的训练轮数，用于限制训练时间 \\
 
 图\ref{reply}展示了经验回放缓冲区和目标网络的深度Q网络的工作流程。图中描绘了状态输入到主网络和目标网络的过程，以及如何将经验元组存储到经验回放缓冲区中。同时，从缓冲区中随机抽样的经验被用于计算损失并更新主网络。此外，通过某种策略（例如，每隔固定步数）更新目标网络，从而提高模型的稳定性。
 
-\begin{figure}[H]
+\begin{figure}
   \centering
   \includegraphics[width=.75\linewidth]{figures/content/reply.png}
   \caption{经验回放缓冲区的工作流程}
@@ -342,7 +342,7 @@ DBSCAN算法的核心概念是将数据点划分为三类：核心点、边界�
 
 算法\ref{DBSCAN}用于聚类个体并获取代表智能体。给定一组具有出行特征的个体数据集$D$、距离阈值$\mu$和形成聚类所需的最小点数$m$，算法首先对数据进行归一化，然后遍历每个非聚类个体。对于每个个体$\bm{x}$，算法计算其在阈值$\mu$内的邻居集$N$。如果邻居集的大小小于$m$，则将个体$\bm{x}$标记为噪声；否则，将其设置为新聚类$C$的核心点。接着，算法遍历$N$中的每个个体，并更新邻居集和聚类。最终，算法返回用于获取代表的个体群集。算法\ref{DBSCAN}实现了DBSCAN聚类过程，用于处理具有出行特征的个体数据集。通过这种方式，算法能够将个体划分为不同的聚类，同时识别并处理噪声点，从而在聚类中找到具有代表性的个体。
 
-\begin{algorithm} [H]
+\begin{algorithm}
 \small
 \caption{聚类个体并获取代表智能体}\label{DBSCAN}
 \begin{algorithmic}
