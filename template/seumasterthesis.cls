@@ -840,7 +840,7 @@
             }\\
             {\universitynameeng}\\
             % 修改4 -- Reanon, 专业硕士为 Professional，学术硕士为 Academic
-            {For the Professional Degree of \@degreetypeen}\\
+            {For the Academic Degree of \@degreetypeen}\\
 
             %% Author
             {\vspace{0.5in}}
